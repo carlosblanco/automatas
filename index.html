@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Automatas</title>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+
+    <style>
+        .canvas-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        #canvas {
+            border: 2px solid #000000;
+        }
+
+        .error {
+            color: #EC644B;
+        }
+
+        .success {
+            color: #66CC99;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+
+
+    <div class="canvas-container">
+
+        <canvas id="canvas" width="800" height="600">
+            <span class="error">Your browser does not support<br>the HTML5 &lt;canvas&gt; element</span>
+        </canvas>
+    </div>
+    <div>
+        <span id="result-span"> &nbsp;</span>
+
+    </div>
+    <div class="controls-container">
+        <div>
+            <label for="word-input">Word to evaluate:</label>
+            <input type="text" id="word-input">
+        </div>
+        <div class="float-right">
+            <button onclick="verify()" id="evaluate-button" class="button">Evaluate</button>
+            <button onclick="clear()" id="clear-button" class="button  button-outline">Clear</button>
+        </div>
+    </div>
+
+</div>
+
+<script type="application/javascript" src="/automata.js"></script>
+</body>
+</html>
