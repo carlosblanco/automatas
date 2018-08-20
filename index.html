@@ -2,18 +2,33 @@
 <html>
 <head>
     <title>Automatas</title>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
-    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
-    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="An automata simulator.">
+    <meta name="author" content="Carlos Blanco">
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display|Slabo+27px" rel="stylesheet">
     <style>
-        .canvas-container {
-            text-align: center;
-            padding: 20px;
+        body {
+            background-color: #f6f6f6;
+            font-family: 'Playfair Display', serif;
+        }
+        .top-margin{
+            margin-top: 20px;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+        }
+
+        .instructions-container {
+            font-size: 10pt;
         }
 
         #canvas {
             border: 2px solid #000000;
+            border-radius: 5px;
+            background-color: white;
         }
 
         .error {
@@ -23,32 +38,114 @@
         .success {
             color: #66CC99;
         }
+        .instructions-list{
+            padding-left: 25px;
+        }
+        .flex-grid {
+            display: flex;
+        }
 
+        .col {
+            flex: 1;
+            padding: 1em;
+        }
+
+        .flex-vertical {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn {
+            padding: 3px;
+        }
+        #word-input.col{
+            font-size: 14pt;
+            padding: 5px;
+        }
+        #result-span{
+            font-size: 18pt;
+            font-family: sans-serif;
+            text-align: center;
+        }
+        @media (max-width: 400px) {
+            .flex-grid {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
 
+    <div class="flex-grid">
 
-    <div class="canvas-container">
-
-        <canvas id="canvas" width="800" height="600">
-            <span class="error">Your browser does not support<br>the HTML5 &lt;canvas&gt; element</span>
-        </canvas>
-    </div>
-    <div>
-        <span id="result-span"> &nbsp;</span>
-
-    </div>
-    <div class="controls-container">
-        <div>
-            <label for="word-input">Word to evaluate:</label>
-            <input type="text" id="word-input">
+        <div class="col">
+            <h3>Deterministic Automata</h3>
+            <div class="canvas-container">
+                <canvas id="canvas" width="600" height="600">
+                    <span class="error">Your browser does not support<br>the HTML5 &lt;canvas&gt; element</span>
+                </canvas>
+            </div>
         </div>
-        <div class="float-right">
-            <button onclick="verify()" id="evaluate-button" class="button">Evaluate</button>
-            <button onclick="clear()" id="clear-button" class="button  button-outline">Clear</button>
+
+
+        <div class="col flex-vertical">
+            <div class="col">
+                <h5>&nbsp;</h5>
+                <div class="controls-container">
+                    <div class="top-margin">
+                        <label for="word-input">Word to evaluate:</label>
+                    </div>
+                    <div class="flex-grid">
+                        <input type="text" id="word-input" placeholder="Type a word to evaluate"  class="col">
+                    </div>
+                    <div class="top-margin">
+                        <label for="speed">Simulation Speed</label>
+                        <input type="range" id="speed" min="0" max="2000" value="1000" step="250" style="direction: rtl"/>
+                        <button onclick="verify()" id="evaluate-button" class="btn">Simulate</button>
+                        <button onclick="clearScreen()" id="clear-button" class="btn">Clear</button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div id="result-span"> &nbsp;</div>
+                </div>
+            </div>
+            <div class="col">
+                <strong>Instructions:</strong>
+                <div class="instructions-container">
+                    <ul class="instructions-list">
+                        <li>
+                            <strong>Add State</strong>. Double click on the canvas to add a new state.
+                        </li>
+                        <li>
+                            <strong>Change State Name</strong>. Click to select a state, and then type to change its name.
+                        </li>
+                        <li>
+                            <strong>Start, End State</strong>. Double click on an existing state to toggle between
+                            Start, Final and Regular state types.
+                        </li>
+                        <li>
+                            <strong>Add Transition</strong>. Shift-drag between two states to add a transition.
+                        </li>
+                        <li>
+                            <strong>Add Transition Symbol</strong>. Click to select a transition and type to set its
+                            transition symbol (separate by comma for more than one symbol).
+                        </li>
+                        <li>
+                            <strong>Delete something</strong>. Click to select an item an press the Delete key or
+                            Shift-Backspace to delete it.
+                        </li>
+                        <li>
+                            <strong>Epsilon</strong>. Type \e to write epsilon. All numbers are drawn as subscripts.
+                        </li>
+                        <li>
+                            <strong>Simulate</strong>. Type a word and click simulate to run a word evaluation. (Simulation only works for DFAs, no &#949;-transitions.)
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
+
     </div>
 
 </div>
