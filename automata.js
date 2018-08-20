@@ -1,4 +1,4 @@
-const FONT = "Times New Roman";
+const FONT = '"Times New Roman"';
 
 class State {
     constructor(x, y, name = '') {
@@ -10,6 +10,7 @@ class State {
         this.isAcceptState = false;
         this.withSymbol = name;
         this.isEvaluating = false;
+        this.isAccepted = false;
     }
 
     setMouseStart(x, y) {
@@ -685,46 +686,10 @@ function ExportAsSVG() {
     };
 }
 
-var greekLetterNames = [
-    "Alpha",
-    "Beta",
-    "Gamma",
-    "Delta",
-    "Epsilon",
-    "Zeta",
-    "Eta",
-    "Theta",
-    "Iota",
-    "Kappa",
-    "Lambda",
-    "Mu",
-    "Nu",
-    "Xi",
-    "Omicron",
-    "Pi",
-    "Rho",
-    "Sigma",
-    "Tau",
-    "Upsilon",
-    "Phi",
-    "Chi",
-    "Psi",
-    "Omega"
-];
 
 function convertLatexShortcuts(text) {
-    // html greek characters
-    for (var i = 0; i < greekLetterNames.length; i++) {
-        var name = greekLetterNames[i];
-        text = text.replace(
-            new RegExp("\\\\" + name, "g"),
-            String.fromCharCode(913 + i + (i > 16))
-        );
-        text = text.replace(
-            new RegExp("\\\\" + name.toLowerCase(), "g"),
-            String.fromCharCode(945 + i + (i > 16))
-        );
-    }
+
+    text = text.replace("\\e",String.fromCharCode(949));
 
     // subscripts
     for (var i = 0; i < 10; i++) {
@@ -838,6 +803,12 @@ function hasStartState() {
 }
 
 function isValid() {
+
+    if(!hasStartState()){
+        return false;
+    }
+
+
     return true;
 }
 
@@ -845,19 +816,23 @@ function getStartState() {
     return states.find(s => s.isStartState == true);
 }
 
-function clearEvaluatingTransitions() {
+function clearTransitionEvaluation() {
     return transitions.forEach(t => t.isEvaluating = false);
 }
 
-function clearEvaluatingStates() {
-    return states.forEach(s => s.isEvaluating = false);
+function clearStateEvaluation() {
+    return states.forEach(s => {
+        s.isEvaluating = false;
+        s.isAccepted = false;
+    });
 }
 
-async function delay() {
+async function delay(timeout = 1000) {
+    var timeout = document.getElementById("speed").value;
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve();
-        }, 1000)
+        }, timeout)
     })
 }
 
@@ -865,7 +840,7 @@ function evaluateTransition(fromState, withSymbol) {
     var state;
     if (isValid()) {
         this.transitions.forEach(t => {
-            if (t.fromState == fromState && t.withSymbol == withSymbol) {
+            if (t.fromState == fromState && t.withSymbol.split(',').map(s => s.trim()).includes(withSymbol)) {
                 t.isEvaluating = true;
                 state = t.toState;
             }
@@ -875,59 +850,82 @@ function evaluateTransition(fromState, withSymbol) {
     return state;
 }
 
+function clearClasses(el){
+    el.removeAttribute("class");
+}
+
+function makeEvaluatingString(string, index){
+
+}
 
 async function verify() {
-    clearEvaluatingStates();
+    selectedObject = null;
+    clearStateEvaluation();
     var string = document.getElementById('word-input').value;
+
+    clearClasses(document.getElementById("result-span"));
+    document.getElementById("result-span").innerHTML = string;
+
+
+
     var currentState = this.getStartState();
-    currentState.isEvaluating = true;
-    draw();
-    await delay();
 
-    for (var i = 0; i < string.length; i++) {
+    if(isValid()) {
+        currentState.isEvaluating = true;
+        draw();
+        await delay();
 
-        var error = false;
-        var currentSymbol = string.charAt(i);
-        var newState = await evaluateTransition(currentState, currentSymbol);
-        if(!newState){
-            document.getElementById("result-span").innerHTML = "Rejected - Bad transition";
-            document.getElementById("result-span").classList.add("error");
-            error = true;
-            break;
+        for (var i = 0; i < string.length; i++) {
+
+            var error = false;
+            var currentSymbol = string.charAt(i);
+            var newState = await evaluateTransition(currentState, currentSymbol);
+            if (!newState) {
+                document.getElementById("result-span").innerHTML = "Rejected - Bad transition";
+                clearClasses(document.getElementById("result-span"));
+                document.getElementById("result-span").classList.add("error");
+                error = true;
+                break;
+            }
+            currentState.isEvaluating = false;
+            draw();
+            await delay();
+
+            newState.isEvaluating = true;
+            currentState = newState;
+            clearTransitionEvaluation();
+            draw();
+            await delay();
+
         }
-        currentState.isEvaluating = false;
+
+        if (!error) {
+            document.getElementById("result-span").innerHTML = string + "<br>" + (currentState.isAcceptState ? "Accepted" : "Rejected");
+            clearClasses(document.getElementById("result-span"));
+            document.getElementById("result-span").classList.add(currentState.isAcceptState ? "success" : "error");
+        }
+
+        currentState.isAccepted = currentState.isAcceptState;
         draw();
-        await delay();
-
-        newState.isEvaluating = true;
-        currentState = newState;
-        clearEvaluatingTransitions();
-        draw();
-        await delay();
-
-    }
-
-    if(!error) {
-        document.getElementById("result-span").innerHTML = string + ": "+ (currentState.isAcceptState ? "Accepted" : "Rejected");
-        document.getElementById("result-span").classList.remove("success");
-        document.getElementById("result-span").classList.remove("error");
-        document.getElementById("result-span").classList.add(currentState.isAcceptState ? "success" : "error");
+    }else{
+        document.getElementById("result-span").innerHTML = "Invalid Automata";
+        clearClasses(document.getElementById("result-span"));
+        document.getElementById("result-span").classList.add("error");
     }
     return currentState.isAcceptState;
 }
 
-async function clear(){
-    clearEvaluatingStates();
-    clearEvaluatingTransitions();
-    document.getElementById("result-span").value = '';
+async function clearScreen(){
+    clearStateEvaluation();
+    clearTransitionEvaluation();
+    document.getElementById("result-span").innerHTML = '';
     draw();
-
-    return true;
 }
 
 
 let blue = "#1E8BC3";
 let red = "#EF4836";
+let green = "#66CC99";
 
 function drawUsing(c) {
     c.clearRect(0, 0, canvas.width, canvas.height);
@@ -936,7 +934,7 @@ function drawUsing(c) {
 
     for (var i = 0; i < states.length; i++) {
         c.lineWidth = 1;
-        c.fillStyle = c.strokeStyle = (states[i].isEvaluating) ? red : states[i] == selectedObject ? blue : "black";
+        c.fillStyle = c.strokeStyle = (states[i].isAccepted) ? green :(states[i].isEvaluating) ? red : states[i] == selectedObject ? blue : "black";
         states[i].draw(c);
     }
     for (var i = 0; i < transitions.length; i++) {
@@ -1181,6 +1179,7 @@ document.onkeypress = function (e) {
         "withSymbol" in selectedObject
     ) {
         selectedObject.withSymbol += String.fromCharCode(key);
+        selectedObject.withSymbol = convertLatexShortcuts(selectedObject.withSymbol);
         resetCaret();
         draw();
 
