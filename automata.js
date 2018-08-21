@@ -686,14 +686,16 @@ function ExportAsSVG() {
     };
 }
 
+function convertLambda(text){
+    text = text.replace("\\e",String.fromCharCode(949));
+    return text;
+}
 
 function convertLatexShortcuts(text) {
 
-    text = text.replace("\\e",String.fromCharCode(949));
-
     // subscripts
     for (var i = 0; i < 10; i++) {
-        text = text.replace(
+        text= text.replace(
             new RegExp("" + i, "g"),
             String.fromCharCode(8320 + i)
         );
@@ -734,7 +736,7 @@ function canvasHasFocus() {
 }
 
 function drawText(c, originalText, x, y, angleOrNull, isSelected) {
-    text = convertLatexShortcuts(originalText);
+    let text = convertLatexShortcuts(originalText);
     c.font = `20px ${FONT}`;
     var width = c.measureText(text).width;
 
@@ -1179,7 +1181,7 @@ document.onkeypress = function (e) {
         "withSymbol" in selectedObject
     ) {
         selectedObject.withSymbol += String.fromCharCode(key);
-        selectedObject.withSymbol = convertLatexShortcuts(selectedObject.withSymbol);
+        selectedObject.withSymbol = convertLambda(selectedObject.withSymbol);
         resetCaret();
         draw();
 
