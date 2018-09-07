@@ -936,17 +936,17 @@ function drawUsing(c) {
 
     for (var i = 0; i < states.length; i++) {
         c.lineWidth = 1;
-        c.fillStyle = c.strokeStyle = (states[i].isAccepted) ? green :(states[i].isEvaluating) ? red : states[i] == selectedObject ? blue : "black";
+        c.fillStyle = c.strokeStyle = (states[i].isAccepted) ? green :(states[i].isEvaluating) ? red : states[i] == selectedObject ? blue : "white";
         states[i].draw(c);
     }
     for (var i = 0; i < transitions.length; i++) {
         c.lineWidth = 1;
-        c.fillStyle = c.strokeStyle = (transitions[i].isEvaluating) ? red : transitions[i] == selectedObject ? blue : "black";
+        c.fillStyle = c.strokeStyle = (transitions[i].isEvaluating) ? red : transitions[i] == selectedObject ? blue : "white";
         transitions[i].draw(c);
     }
     if (currentLink != null) {
         c.lineWidth = 1;
-        c.fillStyle = c.strokeStyle = "black";
+        c.fillStyle = c.strokeStyle = "white";
         currentLink.draw(c);
     }
 
