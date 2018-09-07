@@ -925,9 +925,9 @@ async function clearScreen(){
 }
 
 
-let blue = "#1E8BC3";
-let red = "#EF4836";
-let green = "#66CC99";
+let blue = "#2E86C1";
+let red = "#C0392B";
+let green = "#2ECC71";
 
 function drawUsing(c) {
     c.clearRect(0, 0, canvas.width, canvas.height);
