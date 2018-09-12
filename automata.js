@@ -924,10 +924,27 @@ async function clearScreen(){
     draw();
 }
 
+async function toggleDarkMode(){
+    var c = document.getElementById("canvas");
+    clearClasses(c);
+    c.classList.add("canvas");
 
+    if(strokeColor == black) {
+        strokeColor = white;
+        c.classList.add("canvas-dark");
+    }else{
+        strokeColor = black;
+    }
+
+    draw();
+}
+
+let black = "black";
+let white = "white";
 let blue = "#2E86C1";
 let red = "#C0392B";
 let green = "#2ECC71";
+let strokeColor = black;
 
 function drawUsing(c) {
     c.clearRect(0, 0, canvas.width, canvas.height);
@@ -936,17 +953,17 @@ function drawUsing(c) {
 
     for (var i = 0; i < states.length; i++) {
         c.lineWidth = 1;
-        c.fillStyle = c.strokeStyle = (states[i].isAccepted) ? green :(states[i].isEvaluating) ? red : states[i] == selectedObject ? blue : "white";
+        c.fillStyle = c.strokeStyle = (states[i].isAccepted) ? green :(states[i].isEvaluating) ? red : states[i] == selectedObject ? blue : strokeColor;
         states[i].draw(c);
     }
     for (var i = 0; i < transitions.length; i++) {
         c.lineWidth = 1;
-        c.fillStyle = c.strokeStyle = (transitions[i].isEvaluating) ? red : transitions[i] == selectedObject ? blue : "white";
+        c.fillStyle = c.strokeStyle = (transitions[i].isEvaluating) ? red : transitions[i] == selectedObject ? blue : strokeColor;
         transitions[i].draw(c);
     }
     if (currentLink != null) {
         c.lineWidth = 1;
-        c.fillStyle = c.strokeStyle = "white";
+        c.fillStyle = c.strokeStyle = strokeColor;
         currentLink.draw(c);
     }
 
