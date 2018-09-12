@@ -17,7 +17,7 @@
             margin-top: 20px;
         }
         .container {
-            max-width: 960px;
+            max-width: 1280px;
             margin: auto;
         }
 
@@ -25,7 +25,13 @@
             font-size: 10pt;
         }
 
-        #canvas {
+        .canvas {
+            border: 2px solid #000000;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        .canvas-dark {
             border: 2px solid #000000;
             border-radius: 5px;
             background-color: black;
@@ -82,7 +88,7 @@
         <div class="col">
             <h3>Deterministic Automata</h3>
             <div class="canvas-container">
-                <canvas id="canvas" width="600" height="800">
+                <canvas id="canvas" width="900" height="800" class="canvas">
                     <span class="error">Your browser does not support<br>the HTML5 &lt;canvas&gt; element</span>
                 </canvas>
             </div>
@@ -91,7 +97,7 @@
 
         <div class="col flex-vertical">
             <div class="col">
-                <h5>&nbsp;</h5>
+                <label>Dark Mode: </label><input id="dark-mode-checkbox" type="checkbox" onclick="toggleDarkMode()">
                 <div class="controls-container">
                     <div class="top-margin">
                         <label for="word-input">Word to evaluate:</label>
